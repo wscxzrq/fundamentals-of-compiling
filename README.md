@@ -923,3 +923,39 @@ RecognizeWs(ch) {
    > 7. $U^+ = U^*U = UU^*$
    >
    > 8. $(U^*)^* = U^*$
+
+2. **正则定义**
+
+   > 为了表示方便，可以对给定的正则表达式用一个名字来表示，然后再用这个名字定义新的正则表达式。设`字母表`为$\Sigma$，`正则定义`可以按如下形式来定义
+   >
+   > <img src="image-20240102221641324.png" alt="image-20240102221641324" style="zoom:50%;" />
+   >
+   > 其中，每个$d_i(i=1,2…,n)$都是一个新的名字，它们互不相同，且不在$\Sigma$中。$r_i(i=1,2…,n)$是在$\Sigma \bigcup(d_1,d_2,…,d_i-1)$上定义的正则表达式，即用基本符号和前面已经定义的名字表示的正则表达式
+   >
+   > `例子：`C语言中的标识符是以字符或下划线开头的由字母、数字和下划线组成的符号串，写出标识符的正则表达式定义
+   >
+   > 如果引进名字 id 来表示标识符，digit 和 letter 分别是正则定义的名字，则标识符的正则表达式可以表示为 $letter(letter|digit)^*$，具体定义过程：
+   >
+   > ![image-20240102222855603](image-20240102222855603.png)
+   >
+   > `例子：`用正则定义的方式来描述 Sample 语言中无符号浮点数的正则表达式。一个数如果没有小数部分和指数部分，就是一个整数；整数部分要么为 0，要么不以0 开头的一到多位数字；浮点数的小数部分和指数部分都是可选的，小数点后和 e/E 之后的数字至少有一位，是 0～9 的任意数字。
+   >
+   > 具体定义过程：
+   >
+   > $zero \rightarrow 0$	`表示 0 `
+   >
+   > $nonzero \rightarrow 1|……｜9$	`表示 1-9 `
+   >
+   > $digit \rightarrow zero | nonzero$	`表示 0-9`
+   >
+   > $digits \rightarrow digit \ digit^*$	`表示 0-9 开头后跟 0-9 组成的任意位数字符串`
+   >
+   > $integerPart \rightarrow nonzero \ digit^* |zero$ 	`1-9开头后跟 0-9组成的 任意位数字符，或 0`
+   >
+   > $optionalFraction \rightarrow .digits|\varepsilon$	`小数点开头后跟 1-9组成的 任意位数字符或空串`
+   >
+   > $optionlExponent \rightarrow ((e/E)(+|-|\varepsilon)digits)$	`表示e或者 E 开头后跟+或—或空串在跟一个长度大于等于 1 的数字串`
+   >
+   > $FloatNumber \rightarrow integerPart$ 	optionalFraction 	optionalExponent
+   >
+   > 
