@@ -1005,6 +1005,151 @@ RecognizeWs(ch) {
    >
    > 状态转换表的优点是可以快速找到在给定状态下读入给定输入符号时的下一状态；其缺点是当状态较多、输入字母较多、多数转换为空时，会占用大量无用空间
    >
-   > DFA 的特点：
+   > `DFA 的特点：`状态转换函数是一个单值函数；从状态转换图来看，就是从任何状态出发，对于任何输入符号，最多只有一个后继状态，而且从一个状态出发的所有边上标记的符号均不同；如果在状态转换表中，每个表项最多只有一个状态。
    >
-   > 
+   > 如果 `DFA `的`初始状态又是终结状态`，则称该 DFA 可识别`空字`$\varepsilon$
+   >
+   > DFA模拟，判断 DFA 是否能识别一个输入符号串
+   > `输入：`一个以 eof 结尾的字符串 x，一个 DFA D，D 的初始状态为$s_0$，终结状态集为 F，转换函数为$\delta$
+   >
+   > `输出：`如果 D 能识别符号串 x。输出 yes，否则输出 no
+   >
+   > $s = s_0;$ 	变量 s 保存 DFA 初始状态 
+   >
+   > c = GetNextChar();	返回输入串的下一个符号 
+   >
+   > While(c != eof) { eof是指针文件结束符
+   >
+   > ​	$s = \delta(s,c)$	从状态 s 出发，沿着标记为 c 的边所能到达的状态 
+   >
+   > ​	$c = GetNextChar()$
+   >
+   > }
+   >
+   > if(s 在 F 中) return "yes"
+   >
+   > else return "no"
+
+2. **NFA**
+
+   > NFA也是一个五元组定义的数学模型
+   >
+   > NFA 所识别的语言是指 NFA M 所能识别的符号串的全体，记为L(M)
+   >
+   > $M = (S,\Sigma,\delta,S_0,F)$
+   >
+   > 其中：
+   >
+   > 1. S 是一个有穷状态集
+   > 2. $\Sigma$是有穷字母表，它的每个元素称为一个输入符号，所以也称$\Sigma$为输入字母表
+   > 3. $\delta$为状态转换函数，将 S 和$\Sigma$的笛卡尔乘积映射到 S 的转换函数，对于状态集合中的任何一个状态 S，以及字母表中任何一个字母 a，$\delta(S,a)$表示从状态 S 出发，沿着状态标记的边到达的状态，状态 S对于输入符号 a 的后继状态
+   > 4. 状态集合$S_0$是非空的初始状态集合，简称初态集，$s_0 \subseteq S$
+   > 5. F 是接受（或终结）状态集合（可以为空），简称终态集，$F \subseteq S$
+   >
+   > `例子：` NFA $M = (\lbrace S,P,Z, \rbrace,\lbrace 0,1 \rbrace, \delta,\lbrace  S,P \rbrace,\lbrace Z \rbrace)$
+   >
+   > 其中：
+   >
+   > $\delta(S,0) = \lbrace P \rbrace$
+   >
+   > $\delta(S,1) = \lbrace S,Z \rbrace$
+   >
+   > $\delta(Z,0) = \lbrace P \rbrace$
+   >
+   > $\delta(Z,1) = \lbrace P \rbrace$
+   >
+   > $\delta(P,1) = \lbrace Z \rbrace$
+   >
+   > `状态转换图：`
+   >
+   > <img src="image-20240103232425639.png" alt="image-20240103232425639" style="zoom:50%;" />
+   >
+   > `状态转换表：`
+   >
+   > | 状态｜输入 | 0    | 1     |
+   > | ---------- | ---- | ----- |
+   > | A          | {P}  | {S,Z} |
+   > | P          | {}   | {Z}   |
+   > | Z          | {P}  | {P}   |
+   >
+   > `例子：`有 NFA $M = (\lbrace 0,1,2,3 \rbrace,\lbrace a,b \rbrace,\delta,0，\lbrace 3 \rbrace)$ $\delta$为：
+   >
+   > $\delta(0,a) = \lbrace 0,1 \rbrace$ 	$\delta(0,b) = \lbrace 0 \rbrace$ 
+   >
+   > $\delta(1,b) = \lbrace 2 \rbrace$ 	$\delta(2,b) = \lbrace 3 \rbrace$ 
+   >
+   > `状态转换图：`
+   >
+   > <img src="image-20240104000614914.png" alt="image-20240104000614914" style="zoom:50%;" />
+   >
+   > 该 NFA M 所识别的语言L(M)就是用$(a|b)^* abb$表示的全部符号串
+
+3. **NFA 的确定化**
+
+   > `NFA 与 DFA 的区别：`
+   >
+   > 1. DFA 任何状态之间都没有$\varepsilon$转换，即没有任何状态可以不进行输入符号的匹配就直接进入下一个状态。
+   > 2. DFA 对任何状态 S 和任何输入符号 a，最多只有一条标记为 a 的边离开 S，即状态转换函数$\delta$：$S \times \Sigma \rightarrow S$是一个单值部分函数。
+   > 3. DFA 的初态唯一，NFA 的初态为一集合
+   >
+   > 两个有穷自动机的`等价`是指对任何两个有穷自动机 $M$和$M'$，如果$L(M) = L(M')$，则称$M$与$M'$是`等价`的。
+   >
+   > 形式语言与自动机理论已经证明，`NFA `和` DFA` 从`功能来说是等价的`，即它们所识别的语言是`相同`的。也就是说，对于每个` NFA M`，一定存在一个 `DFA M'`，似的 $L(M) = L(M')$。与某一 NFA 等价的 DFA 不是唯一的
+   >
+   > 从 NFA 构造等价的 DFA的方法很多，最常用的一种方法是`子集法`。构造的基本思路是：DFA 的每一个状态对应 NFA中的一组状态，常用 DFA的一个状态去纪录 NFA 中读入一个输入符号后可能到达的状态集合。
+   >
+   > ------
+   >
+   > `与状态集合 I 有关的几个运算`
+   >
+   > 1. 状态集合 $I $的$\varepsilon$-闭包表示为$\varepsilon\_Closure(I)$，定义为由下面两条规则构成的集合：
+   >
+   >    1. 若$q\in I$，则$q\in \varepsilon\_Closure(I)$
+   >    2. 若$q\in I$，设从 q 出发经过任意条$\varepsilon$弧而能到达的状态为 q'，则$q'\in \varepsilon\_Closure(I)$
+   >
+   > 2. 状态集合$I$的 a 弧转换表示为$I_a$，定义为：
+   >
+   >    $i_a = \varepsilon\_Closure(move(I,a))$ 
+   >
+   >    其中，$move(I,a)$表示从$I$中任一状态出发经过一条 a 弧到达的状态的集合。
+   >
+   > `例子：`
+   >
+   > ![image-20240104232751571](image-20240104232751571.png)
+   >
+   > 若$I_1 = \lbrace 1 \rbrace$，$I_2 = \lbrace 5 \rbrace$，$I_3 = \lbrace 1，2 \rbrace$，求$\varepsilon\_Closure(I_1)$,$\varepsilon\_Closure(I_2)$，$I_3a$
+   >
+   > $\varepsilon\_Closure(I_1) = \varepsilon\_Closure(\lbrace 1 \rbrace) = \lbrace 1,2 \rbrace$
+   >
+   > $\varepsilon\_Closure(I_2) = \lbrace 5,6,2 \rbrace$
+   >
+   > 当$I_3 = \lbrace 1,2 \rbrace$时，$move(i_3,a) = \lbrace 5,3,4 \rbrace$ <font color='#EF4444'>从 1,2 节点出发 a 弧所能到达的节点</font>
+   >
+   > $I_3a = \varepsilon\_Closure(\lbrace 5,3,4 \rbrace) = \lbrace 2,3,4,5,6,7,8 \rbrace$ <font color='#EF4444'>从 5,3,4节点出a 弧所能到达的节点</font> 
+
+   ------
+
+   **使用子集法对给定 NFA 进行确定化，转换为 DFA 的步骤：**
+
+   > 1. 对 NFA的状态转换图进行改造。由于 NFA 可能由多个初始状态、多个终结状态，因此增加状态 X，Y，使之称为新的唯一的初始状态和终结状态。从 X 引$\varepsilon$弧到原初始状态，从原初始状态引$\varepsilon$弧到 Y 状态
+   > 2. 对改造后的 NFA 使用子集法进行确定化。
+
+   ------
+
+   **由 NFA 构造 DFA 的子集法**
+
+   > 输入：NFA
+   >
+   > 输出：DFA
+   >
+   > 步骤：
+   >
+   > 1. 对$\Sigma = \lbrace a_1,a_2,…,a_k \rbrace$，构造一个 K+1 列的状态转换表，行为状态，列为所有输入字母表中的符号。置该表的首行首列为$\varepsilon\_Closure(X)$，其中 X 为初始状态。
+   > 2. 若某行的第一列的状态已确定为$I$，则计算第$i+1(i = 1,2,…,k)$列的值为$I_{ai+1} = \varepsilon\_Closure(move(I,a_{i+1}))$；然后检查该行上的每个表项的状态子集，看它是否已在第一列出现过。若未出现，将其添加到表后的空行的第一列上。重复这个过程，直到表中的所有状态子集均在第一列中出现过。
+   > 3. 将每个状态子集视为一个新的状态，并重新命名，就得到了一个 DFA的状态转换表。该状态转换表的行是 DFA 的所有状态；列是 DFA 的输入字母表，和 NFA 的输入字母表相同；DFA 的初始状态是含有原NFA 的初始状态（即首行首列的状态）；终结状态是含有原 NFA 终结状态的所有状态。
+
+   ------
+
+   > `例子：`将所示 NFA确定化
+   >
+   > ![image-20240105004139809](image-20240105004139809.png)
