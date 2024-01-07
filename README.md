@@ -1153,5 +1153,68 @@ RecognizeWs(ch) {
    > `例子：`将所示 NFA确定化
    >
    > ![image-20240105004139809](image-20240105004139809.png)
+   >
+   > 1. 根据上述步骤，首先添加新的初始状态和新的终结状态 X 和 Y
+   >
+   >    ![image-20240108105236081](image-20240108105236081.png)
+   >
+   > 2. 使用子集法进行确定化
+   >
+   >    首先，由于输入字母表$\Sigma = \lbrace a,b \rbrace$，因此构造一个 3 列的状态转换表，$\varepsilon\_Closure(X)$作为该表的首行首列的值，$\varepsilon\_Closure(X)$为$\lbrace X,1,2 \rbrace$
+   >
+   >    |            I            |  a   |  b   |
+   >    | :---------------------: | :--: | :--: |
+   >    | $\lbrace X,1,2 \rbrace$ |      |      |
+   >
+   >    接着求该集合的$I_a$和$I_b$，填入该行对应于列 a 和列 b 的位置
+   >
+   >    |            I            |            a            |            b            |
+   >    | :---------------------: | :---------------------: | :---------------------: |
+   >    | $\lbrace X,1,2 \rbrace$ | $\lbrace 1,2,3 \rbrace$ | $\lbrace 1,2,4 \rbrace$ |
+   >
+   >    然后检查该行上每个表项的值，看它是否已在第一列出现过，如果没有出现，在表后添加一行，将其添加到第一列，如$\lbrace 1,2,3 \rbrace$和$\lbrace 1,2,4 \rbrace$在第一列中都没有出现过，则状态转换表添加2 行，将它们加到第一列中
+   >
+   >    |            I            |            a            |            b            |
+   >    | :---------------------: | :---------------------: | :---------------------: |
+   >    | $\lbrace X,1,2 \rbrace$ | $\lbrace 1,2,3 \rbrace$ | $\lbrace 1,2,4 \rbrace$ |
+   >    | $\lbrace 1,2,3 \rbrace$ |                         |                         |
+   >    | $\lbrace 1,2,4 \rbrace$ |                         |                         |
+   >
+   >    对刚添加到第一列的每个 I，求其$I_a$和$I_b$的值，填入对应的表项中
+   >
+   >    |            I            |               a               |               b               |
+   >    | :---------------------: | :---------------------------: | :---------------------------: |
+   >    | $\lbrace X,1,2 \rbrace$ |    $\lbrace 1,2,3 \rbrace$    |    $\lbrace 1,2,4 \rbrace$    |
+   >    | $\lbrace 1,2,3 \rbrace$ | $\lbrace 1,2,3,5,6,Y \rbrace$ |    $\lbrace 1,2,4 \rbrace$    |
+   >    | $\lbrace 1,2,4 \rbrace$ |    $\lbrace 1,2,3 \rbrace$    | $\lbrace 1,2,4,5,6,Y \rbrace$ |
+   >
+   >    重复上述检查和求$I_a$、$I_b$的过程，直到所有表项都在第一列中出现过
+   >
+   >    |               I                |               a               |               b               |
+   >    | :----------------------------: | :---------------------------: | :---------------------------: |
+   >    |    S$\lbrace X,1,2 \rbrace$    |    $\lbrace 1,2,3 \rbrace$    |    $\lbrace 1,2,4 \rbrace$    |
+   >    |    A$\lbrace 1,2,3 \rbrace$    | $\lbrace 1,2,3,5,6,Y \rbrace$ |    $\lbrace 1,2,4 \rbrace$    |
+   >    |    B$\lbrace 1,2,4 \rbrace$    |    $\lbrace 1,2,3 \rbrace$    | $\lbrace 1,2,4,5,6,Y \rbrace$ |
+   >    | C$\lbrace 1,2,3,5,6,Y \rbrace$ | $\lbrace 1,2,3,5,6,Y \rbrace$ |  $\lbrace 1,2,4,6,Y \rbrace$  |
+   >    | D$\lbrace 1,2,4,5,6,Y \rbrace$ |  $\lbrace 1,2,3,6,Y \rbrace$  | $\lbrace 1,2,4,5,6,Y \rbrace$ |
+   >    |  E$\lbrace 1,2,4,6,Y \rbrace$  |  $\lbrace 1,2,3,6,Y \rbrace$  | $\lbrace 1,2,4,5,6,Y \rbrace$ |
+   >    |  F$\lbrace 1,2,3,6,Y \rbrace$  | $\lbrace 1,2,3,5,6,Y \rbrace$ |  $\lbrace 1,2,4,6,Y \rbrace$  |
+   >
+   >    重命名所有状态，得到一个新的状态转换表
+   >
+   >    | 状态 | a    | b    |
+   >    | ---- | ---- | ---- |
+   >    | S    | A    | B    |
+   >    | A    | C    | B    |
+   >    | B    | A    | D    |
+   >    | C    | C    | E    |
+   >    | D    | F    | D    |
+   >    | E    | F    | D    |
+   >    | F    | C    | E    |
+   >
+   >    这个状态转换表就是与给定的 NFA 等价的 DFA，用状态转换图表示为：`带有终态的 DFA
+   >     也必须带有终态`
+   >
+   >    ![image-20240108123243141](image-20240108123243141.png)
 
 ​      
